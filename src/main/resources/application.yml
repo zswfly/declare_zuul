@@ -1,0 +1,16 @@
+server:
+  port: 5555
+
+spring:
+  application:
+    name: zuul
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+zuul:
+  routes:
+    redis-services:
+      path: /redis-services/**
+      serviceId: redis-services
