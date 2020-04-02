@@ -4,6 +4,13 @@ server:
 spring:
   application:
     name: zuul
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/edu?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: root
+    password: root
+  jpa:
+    show-sql: true
 
 eureka:
   client:
@@ -14,3 +21,6 @@ zuul:
     redis-services:
       path: /redis-services/**
       serviceId: redis-services
+    user-services:
+      path: /user-services/**
+      serviceId: user-services
