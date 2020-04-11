@@ -1,8 +1,10 @@
-package com.zsw.filter;
+package com.zsw.filters;
 
+import com.google.gson.Gson;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 import com.netflix.zuul.exception.ZuulException;
+import com.zsw.entity.common.ResponseJson;
 import com.zsw.services.TestServices;
 import com.zsw.services.TestServices2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,8 +77,16 @@ public class TestFilter extends ZuulFilter{
                 || StringUtils.isEmpty(accessToken.toString())
                 || testServices.getValue(accessToken.toString()) == null
         ){
+            //ctx.setSendZuulResponse(false);
+            //ctx.setResponseStatusCode(401);
+
             ctx.setSendZuulResponse(false);
             ctx.setResponseStatusCode(401);
+            ResponseJson json = new ResponseJson();
+            json.setDescription("没有accessToken");
+            Gson gson = new Gson();
+            ctx.setResponseBody(gson.toJson(json));
+            ctx.getResponse().setContentType("application/json;charset=UTF-8");
             return null;
         }
 
