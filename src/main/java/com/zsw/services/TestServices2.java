@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  */
 @FeignClient(name = "user-services" )
 @Component
-public interface TestServices2 {
+public interface TestServices2 extends IBaseService{
     @RequestMapping(value = "/declare_test/isUser" , method = RequestMethod.GET)
     String isUser(@RequestParam("userName") String userName,@RequestParam("passWord") String passWord);
 }

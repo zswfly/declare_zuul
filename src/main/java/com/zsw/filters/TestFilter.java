@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 import com.netflix.zuul.exception.ZuulException;
-import com.zsw.entity.common.ResponseJson;
+import com.zsw.entitys.common.ResponseJson;
 import com.zsw.services.TestServices;
 import com.zsw.services.TestServices2;
 import org.springframework.beans.factory.annotation.Autowired;
