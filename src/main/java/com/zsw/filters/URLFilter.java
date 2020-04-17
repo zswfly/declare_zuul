@@ -41,6 +41,11 @@ public class URLFilter extends ZuulFilter{
                         +UserStaticURLUtil.userController
                         + UserStaticURLUtil.userController_login);
 
+        paths.add("/user-services"
+                +UserStaticURLUtil.userController
+                + UserStaticURLUtil.userController_resetPassWord);
+
+
         paths.add("/**/*.css");
         paths.add("/**/*.jpg");
         paths.add("/**/*.png");
@@ -66,9 +71,9 @@ public class URLFilter extends ZuulFilter{
         String uri=request.getRequestURI();
         PathMatcher matcher = new AntPathMatcher();
         Optional<String> optional =paths.stream().filter(t->matcher.match(t,uri)).findFirst();
-        //return !optional.isPresent();
+        return !optional.isPresent();
         //return true; //是否过滤
-        return false;
+        //return false;
     }
 
     @Override
@@ -80,6 +85,7 @@ public class URLFilter extends ZuulFilter{
         String uri=request.getRequestURI();
         if (uri.indexOf(CommonStaticWord.System_Url) > -1){
             reject("系统专用URL",ctx);
+            return null;
         }
 
         Object token = request.getParameter("token");
