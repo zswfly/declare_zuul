@@ -5,8 +5,9 @@ import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 import com.netflix.zuul.exception.ZuulException;
 import com.zsw.entitys.common.ResponseJson;
-import com.zsw.services.TestServices;
-import com.zsw.services.TestServices2;
+import com.zsw.services.CacheService;
+import com.zsw.utils.CommonStaticWord;
+import com.zsw.utils.UserStaticURLUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
@@ -22,22 +23,24 @@ import java.util.Optional;
  * Created by zhangshaowei on 2020/3/26.
  */
 @Component
-public class TestFilter extends ZuulFilter{
+public class URLFilter extends ZuulFilter{
     /**
      *
      */
     @Autowired
-    private TestServices testServices;
+    CacheService cacheService;
 
-    @Autowired
-    private TestServices2 testServices2;
 
     //非拦截地址
     private List<String> paths;
-    public TestFilter() {
+    public URLFilter() {
         super();
         paths = new ArrayList<>();
-        paths.add("/**/isUser");
+
+        paths.add("/user-services"
+                        +UserStaticURLUtil.userController
+                        + UserStaticURLUtil.userController_login);
+
         paths.add("/**/*.css");
         paths.add("/**/*.jpg");
         paths.add("/**/*.png");
@@ -63,33 +66,45 @@ public class TestFilter extends ZuulFilter{
         String uri=request.getRequestURI();
         PathMatcher matcher = new AntPathMatcher();
         Optional<String> optional =paths.stream().filter(t->matcher.match(t,uri)).findFirst();
-        return !optional.isPresent();
-        //return true;
+        //return !optional.isPresent();
+        //return true; //是否过滤
+        return false;
     }
 
     @Override
     public Object run() throws ZuulException {
         RequestContext ctx = RequestContext.getCurrentContext();
         HttpServletRequest request = ctx.getRequest();
-        Object accessToken = request.getParameter("accessToken");
 
-        if(accessToken == null
-                || StringUtils.isEmpty(accessToken.toString())
-                || testServices.getValue(accessToken.toString()) == null
+        //系统专用url禁止访问
+        String uri=request.getRequestURI();
+        if (uri.indexOf(CommonStaticWord.System_Url) > -1){
+            reject("系统专用URL",ctx);
+        }
+
+        Object token = request.getParameter("token");
+        Object userId = request.getParameter("userId");
+
+        if(token == null
+                || StringUtils.isEmpty(token.toString())
+                || !token.toString().equals(this.cacheService.getToken(userId.toString()))
         ){
-            //ctx.setSendZuulResponse(false);
-            //ctx.setResponseStatusCode(401);
-
-            ctx.setSendZuulResponse(false);
-            ctx.setResponseStatusCode(401);
-            ResponseJson json = new ResponseJson();
-            json.setDescription("没有accessToken");
-            Gson gson = new Gson();
-            ctx.setResponseBody(gson.toJson(json));
-            ctx.getResponse().setContentType("application/json;charset=UTF-8");
-            return null;
+            reject("没有token",ctx);
+        }else if(!token.toString().equals(this.cacheService.getToken(userId.toString()))){
+            reject("token错误",ctx);
         }
 
         return null;
     }
+    private void reject(String message,RequestContext ctx){
+        ResponseJson json = new ResponseJson();
+        Gson gson = new Gson();
+        json.setMessage(message);
+        ctx.setSendZuulResponse(false);
+        ctx.setResponseStatusCode(401);
+        ctx.getResponse().setContentType("application/json;charset=UTF-8");
+        ctx.setResponseBody(gson.toJson(json));
+    }
+
+
 }
