@@ -16,7 +16,7 @@ public class CacheService implements IBaseService{
     RestTemplate restTemplate;
 
     public String getToken(String userId){
-        ResponseEntity<String> result = restTemplate.postForEntity(
+        ResponseEntity<String> result = this.restTemplate.postForEntity(
                 "http://user-services"
                         + UserStaticURLUtil.permissionController
                         + UserStaticURLUtil.permissionController_initPermission

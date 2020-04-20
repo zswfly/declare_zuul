@@ -4,27 +4,6 @@ server:
 spring:
   application:
     name: zuul
-#  datasource:
-#    driver-class-name: com.mysql.cj.jdbc.Driver
-#    url: jdbc:mysql://localhost:3306/crm?useUnicode=true&characterEncoding=UTF-8&useSSL=false
-#    username: root
-#    password: root
-#  jpa:
-#    database: MYSQL
-#    show-sql: true
-#    hibernate:
-#    ddl-auto: update   #validate | update | create | create-drop
-#  naming:
-#    strategy: org.hibernate.cfg.DefaultNamingStrategy
-#  properties:
-#    hibernate:
-#    dialect: org.hibernate.dialect.MySQL5Dialect  #Hibernate方言
-#
-#
-#
-#mybatis:
-#  type-aliases-package: com.zsw.dao
-#  mapper-locations: classpath:mybatis/mapper/*.xml
 
 eureka:
   client:
@@ -32,9 +11,12 @@ eureka:
       defaultZone: http://localhost:8761/eureka/
 zuul:
   routes:
-    cache-services:
-      path: /cache-services/**
-      serviceId: cache-services
+#    cache-services:
+#      path: /cache-services/**
+#      serviceId: cache-services
+    message-services:
+      path: /message-services/**
+      serviceId: message-services
     user-services:
       path: /user-services/**
       serviceId: user-services
