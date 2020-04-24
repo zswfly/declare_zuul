@@ -1,5 +1,6 @@
 package com.zsw.services;
 
+import com.zsw.utils.CommonStaticWord;
 import com.zsw.utils.UserStaticURLUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,7 @@ public class CacheService implements IBaseService{
 
     public String getToken(String userId){
         ResponseEntity<String> result = this.restTemplate.postForEntity(
-                "http://user-services"
+                CommonStaticWord.HTTP + CommonStaticWord.userServices
                         + UserStaticURLUtil.permissionController
                         + UserStaticURLUtil.permissionController_initPermission
                 ,userId,String.class);

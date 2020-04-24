@@ -8,6 +8,7 @@ import com.zsw.entitys.common.ResponseJson;
 import com.zsw.services.CacheService;
 import com.zsw.utils.CommonStaticWord;
 import com.zsw.utils.UserStaticURLUtil;
+import com.zsw.utils.ZuulUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
@@ -70,7 +71,7 @@ public class URLFilter extends ZuulFilter{
         HttpServletRequest request = requestContext.getRequest();
         String uri=request.getRequestURI();
         PathMatcher matcher = new AntPathMatcher();
-        Optional<String> optional =paths.stream().filter(t->matcher.match(t,uri)).findFirst();
+        Optional<String> optional =ZuulUtil.getPaths().stream().filter(t->matcher.match(t,uri)).findFirst();
         return !optional.isPresent();
         //return true; //是否过滤
         //return false;
@@ -84,33 +85,28 @@ public class URLFilter extends ZuulFilter{
         //系统专用url禁止访问
         String uri=request.getRequestURI();
         if (uri.indexOf(CommonStaticWord.System_Url) > -1){
-            reject("系统专用URL",ctx);
+            ZuulUtil.reject("系统专用URL",ctx);
             return null;
         }
-
-        Object token = request.getParameter("token");
-        Object userId = request.getParameter("userId");
-
-        if(token == null
-                || StringUtils.isEmpty(token.toString())
-                || !token.toString().equals(this.cacheService.getToken(userId.toString()))
-        ){
-            reject("没有token",ctx);
-        }else if(!token.toString().equals(this.cacheService.getToken(userId.toString()))){
-            reject("token错误",ctx);
-        }
+//        String token = request.getParameter("token");
+//        String userId = request.getParameter("userId");
+//        String token = request.getHeader("token");
+//        String userId = request.getHeader("userId");
+//
+//        if(token == null
+//                || StringUtils.isEmpty(token)
+//        ){
+//            reject("没有token",ctx);
+//        }else if(userId == null
+//                || StringUtils.isEmpty(userId)){
+//            reject("没有userId",ctx);
+//        }else if(!token.equals(this.cacheService.getToken(userId))){
+//            reject("token错误",ctx);
+//        }
 
         return null;
     }
-    private void reject(String message,RequestContext ctx){
-        ResponseJson json = new ResponseJson();
-        Gson gson = new Gson();
-        json.setMessage(message);
-        ctx.setSendZuulResponse(false);
-        ctx.setResponseStatusCode(401);
-        ctx.getResponse().setContentType("application/json;charset=UTF-8");
-        ctx.setResponseBody(gson.toJson(json));
-    }
+
 
 
 }
