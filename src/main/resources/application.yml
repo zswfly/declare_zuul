@@ -27,5 +27,6 @@ zuul:
       path: /crm-services/**
       serviceId: crm-services
 
+# TODO 用命令行启动时配置
 jwtUtil:
   SIGNING_KEY: jskglwejthmndggs8963nko
