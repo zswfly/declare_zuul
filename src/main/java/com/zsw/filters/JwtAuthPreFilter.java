@@ -12,10 +12,14 @@ import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.netflix.zuul.filters.support.FilterConstants;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by zhangshaowei on 2020/4/25.
@@ -85,7 +89,24 @@ public class JwtAuthPreFilter extends ZuulFilter {
             //对请求进行路由
             ctx.setSendZuulResponse(true);
             //请求头加入userId，传给业务服务
-            ctx.addZuulRequestHeader("userId", claims.get("userId").toString());
+            String tokenUserId = claims.get("userId").toString();
+            String headUserId = request.getHeader("userId");
+            if(StringUtils.isEmpty(headUserId)){
+                ctx.addZuulRequestHeader("userId", tokenUserId);
+            }
+            if(!StringUtils.isEmpty(headUserId)
+                    && !StringUtils.isEmpty(tokenUserId)
+                    && !headUserId.equals(tokenUserId)){
+                //userId 有问题
+                ZuulUtil.reject("token验证失败 !!!!!!",ctx);
+            }
+//            Map<String, List<String>> requestQueryParams= ctx.getRequestQueryParams();
+//            if(StringUtils.isEmpty(requestQueryParams.get("userId"))){
+//                List<String> temp = new ArrayList<>();
+//                temp.add(userId);
+//                requestQueryParams.put("userId",temp);
+//                ctx.setRequestQueryParams(requestQueryParams);
+//            }
         } catch (ExpiredJwtException expiredJwtEx) {
             //log.error("token : {} 过期", token );
             //不对请求进行路由

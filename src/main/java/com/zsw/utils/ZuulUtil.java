@@ -17,6 +17,7 @@ import java.util.Optional;
 public class ZuulUtil {
     //非拦截地址
     private static List<String> paths = null;
+    private static List<String> loginPaths = null;
 
     public static List<String> getPaths() {
         if (paths == null) {
@@ -24,12 +25,16 @@ public class ZuulUtil {
                 if (paths == null) {
                     paths = new ArrayList<>();
 
-                    paths.add("/user-services"
+                    paths.add(
+                            "/"
+                            + CommonStaticWord.userServices
                             + UserStaticURLUtil.userController
                             + UserStaticURLUtil.userController_login);
 
-                    paths.add("/user-services"
-                            +UserStaticURLUtil.userController
+                    paths.add(
+                            "/"
+                            + CommonStaticWord.userServices
+                            + UserStaticURLUtil.userController
                             + UserStaticURLUtil.userController_resetPassWord);
 
 
@@ -45,6 +50,30 @@ public class ZuulUtil {
         return paths;
     }
 
+    public static List<String> getLoginPaths() {
+        if (loginPaths == null) {
+            synchronized (ZuulUtil.class) {
+                if (loginPaths == null) {
+                    loginPaths = new ArrayList<>();
+                    loginPaths.add(
+                            "/"
+                            + CommonStaticWord.userServices
+                            + UserStaticURLUtil.userController
+                            + UserStaticURLUtil.userController_login
+                    );
+
+                    loginPaths.add(
+                            "/"
+                            + CommonStaticWord.userServices
+                            + UserStaticURLUtil.userController
+                            + UserStaticURLUtil.userController_resetPassWord
+                    );
+                }
+            }
+        }
+        return loginPaths;
+    }
+
     public static Boolean shouldFilter() {
         RequestContext requestContext = RequestContext.getCurrentContext();
         HttpServletRequest request = requestContext.getRequest();
@@ -52,6 +81,15 @@ public class ZuulUtil {
         PathMatcher matcher = new AntPathMatcher();
         Optional<String> optional =getPaths().stream().filter(t->matcher.match(t,uri)).findFirst();
         return !optional.isPresent();
+    }
+
+    public static Boolean isLogin() {
+        RequestContext requestContext = RequestContext.getCurrentContext();
+        HttpServletRequest request = requestContext.getRequest();
+        String uri=request.getRequestURI();
+        PathMatcher matcher = new AntPathMatcher();
+        Optional<String> optional =getLoginPaths().stream().filter(t->matcher.match(t,uri)).findFirst();
+        return optional.isPresent();
     }
 
     public static void reject(String message,RequestContext ctx){

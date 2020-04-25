@@ -7,6 +7,7 @@ import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 import com.zsw.entitys.common.Result;
 import com.zsw.utils.JwtUtil;
+import com.zsw.utils.ResponseCode;
 import com.zsw.utils.ZuulUtil;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,7 +69,7 @@ public class LoginAddJwtPostFilter extends ZuulFilter {
 //        }
         //return true; //是否过滤
         //return false;
-        return ZuulUtil.shouldFilter();
+        return ZuulUtil.isLogin();
     }
     /**
      * 执行过滤器逻辑，登录成功时给响应内容增加token
@@ -83,8 +84,8 @@ public class LoginAddJwtPostFilter extends ZuulFilter {
             String body = StreamUtils.copyToString(stream, StandardCharsets.UTF_8);
             Result<HashMap<String, Object>> result = objectMapper.readValue(body, new TypeReference<Result<HashMap<String,Object>>>() {
             });
-            //result.getCode() == 0 表示登录成功
-            if (result.getCode() == 0) {
+            //result.getCode() == ResponseCode.Code_1 表示登录成功
+            if (result.getCode() == ResponseCode.Code_1) {
                 HashMap<String, Object> jwtClaims = new HashMap<String, Object>() {{
                     put("userId", result.getData().get("userId"));
                 }};
@@ -97,6 +98,8 @@ public class LoginAddJwtPostFilter extends ZuulFilter {
                 ctx.setResponseBody(body);
                 //响应头设置token
                 ctx.addZuulResponseHeader("token", token);
+            }else{
+                ZuulUtil.reject(result.getMessage(),ctx);
             }
         } catch (Exception e) {
             e.printStackTrace();

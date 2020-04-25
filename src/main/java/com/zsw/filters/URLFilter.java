@@ -1,19 +1,14 @@
 package com.zsw.filters;
 
-import com.google.gson.Gson;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 import com.netflix.zuul.exception.ZuulException;
-import com.zsw.entitys.common.ResponseJson;
-import com.zsw.services.CacheService;
 import com.zsw.utils.CommonStaticWord;
 import com.zsw.utils.UserStaticURLUtil;
 import com.zsw.utils.ZuulUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
-import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -28,32 +23,9 @@ public class URLFilter extends ZuulFilter{
     /**
      *
      */
-    @Autowired
-    CacheService cacheService;
+//    @Autowired
+//    CacheService cacheService;
 
-
-    //非拦截地址
-    private List<String> paths;
-    public URLFilter() {
-        super();
-        paths = new ArrayList<>();
-
-        paths.add("/user-services"
-                        +UserStaticURLUtil.userController
-                        + UserStaticURLUtil.userController_login);
-
-        paths.add("/user-services"
-                +UserStaticURLUtil.userController
-                + UserStaticURLUtil.userController_resetPassWord);
-
-
-        paths.add("/**/*.css");
-        paths.add("/**/*.jpg");
-        paths.add("/**/*.png");
-        paths.add("/**/*.gif");
-        paths.add("/**/*.js");
-        paths.add("/**/*.svg");
-    }
 
     @Override
     public String filterType() {
@@ -62,19 +34,13 @@ public class URLFilter extends ZuulFilter{
 
     @Override
     public int filterOrder() {
-        return 0;
+        return 1;
     }
 
     @Override
     public boolean shouldFilter() {
-        RequestContext requestContext = RequestContext.getCurrentContext();
-        HttpServletRequest request = requestContext.getRequest();
-        String uri=request.getRequestURI();
-        PathMatcher matcher = new AntPathMatcher();
-        Optional<String> optional =ZuulUtil.getPaths().stream().filter(t->matcher.match(t,uri)).findFirst();
-        return !optional.isPresent();
-        //return true; //是否过滤
-        //return false;
+
+        return ZuulUtil.shouldFilter();
     }
 
     @Override
@@ -86,7 +52,6 @@ public class URLFilter extends ZuulFilter{
         String uri=request.getRequestURI();
         if (uri.indexOf(CommonStaticWord.System_Url) > -1){
             ZuulUtil.reject("系统专用URL",ctx);
-            return null;
         }
 //        String token = request.getParameter("token");
 //        String userId = request.getParameter("userId");
