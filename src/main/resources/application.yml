@@ -26,3 +26,6 @@ zuul:
     crm-services:
       path: /crm-services/**
       serviceId: crm-services
+
+jwtUtil:
+  SIGNING_KEY: jskglwejthmndggs8963nko

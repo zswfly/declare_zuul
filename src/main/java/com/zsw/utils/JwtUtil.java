@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -17,7 +18,9 @@ public class JwtUtil {
     /**
      * 签名用的密钥
      */
-    private static final String SIGNING_KEY = "78sebr72umyz33i9876gc31urjgyfhgj";
+    @Value("${jwtUtil.SIGNING_KEY}")
+    private String SIGNING_KEY ;
+
     /**
      * 用户登录成功后生成Jwt
      * 使用Hs256算法
