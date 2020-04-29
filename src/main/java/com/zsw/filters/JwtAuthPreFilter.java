@@ -30,8 +30,6 @@ public class JwtAuthPreFilter extends ZuulFilter {
     ObjectMapper objectMapper;
     @Autowired
     JwtUtil jwtUtil;
-/*    @Autowired
-    DataFilterConfig dataFilterConfig;*/
     /**
      * pre：路由之前
      * routing：路由之时
@@ -60,15 +58,6 @@ public class JwtAuthPreFilter extends ZuulFilter {
      */
     @Override
     public boolean shouldFilter() {
-        //路径与配置的相匹配，则执行过滤
-   /*     RequestContext ctx = RequestContext.getCurrentContext();
-        for (String pathPattern : dataFilterConfig.getAuthPath()) {
-            if (PathUtil.isPathMatch(pathPattern, ctx.getRequest().getRequestURI())) {
-                return true;
-            }
-        }*/
-        //return true; //是否过滤
-        //return false;
         return ZuulUtil.shouldFilter();
     }
     /**
@@ -89,35 +78,34 @@ public class JwtAuthPreFilter extends ZuulFilter {
             //对请求进行路由
             ctx.setSendZuulResponse(true);
             //请求头加入userId，传给业务服务
-            String tokenUserId = claims.get("userId").toString();
-            String headUserId = request.getHeader("userId");
-            if(StringUtils.isEmpty(headUserId)){
-                ctx.addZuulRequestHeader("userId", tokenUserId);
-            }
-            if(!StringUtils.isEmpty(headUserId)
-                    && !StringUtils.isEmpty(tokenUserId)
-                    && !headUserId.equals(tokenUserId)){
+            Object tokenUserId = claims.get("userId");
+            Object tokenHostUrl = claims.get("hostUrl");
+
+            if(tokenUserId == null || StringUtils.isEmpty(tokenUserId.toString())){
                 //userId 有问题
                 ZuulUtil.reject("token验证失败 !!!!!!",ctx);
+            }else{
+                ctx.addZuulRequestHeader("userId", tokenUserId.toString());
             }
-//            Map<String, List<String>> requestQueryParams= ctx.getRequestQueryParams();
-//            if(StringUtils.isEmpty(requestQueryParams.get("userId"))){
-//                List<String> temp = new ArrayList<>();
-//                temp.add(userId);
-//                requestQueryParams.put("userId",temp);
-//                ctx.setRequestQueryParams(requestQueryParams);
-//            }
+
+            //选择公司时不用校验
+            if(!ZuulUtil.isSelectUserCompany()) {
+                if (tokenHostUrl == null || StringUtils.isEmpty(tokenHostUrl.toString())) {
+                    //服务器地址 有问题
+                    ZuulUtil.reject("token验证失败 !!!!!!", ctx);
+                } else {
+                    ctx.addZuulRequestHeader("hostUrl", tokenHostUrl.toString());
+                }
+            }
+
         } catch (ExpiredJwtException expiredJwtEx) {
             //log.error("token : {} 过期", token );
             //不对请求进行路由
             ctx.setSendZuulResponse(false);
-            //responseError(ctx, -402, "token expired");
             ZuulUtil.reject("token过期",ctx);
         } catch (Exception ex) {
-            //log.error("token : {} 验证失败" , token );
             //不对请求进行路由
             ctx.setSendZuulResponse(false);
-            //responseError(ctx, -401, "invalid token");
             ZuulUtil.reject("token验证失败",ctx);
         }
         return null;

@@ -46,28 +46,18 @@ public class URLFilter extends ZuulFilter{
     @Override
     public Object run() throws ZuulException {
         RequestContext ctx = RequestContext.getCurrentContext();
-        HttpServletRequest request = ctx.getRequest();
-
-        //系统专用url禁止访问
-        String uri=request.getRequestURI();
-        if (uri.indexOf(CommonStaticWord.System_Url) > -1){
-            ZuulUtil.reject("系统专用URL",ctx);
+        try {
+            HttpServletRequest request = ctx.getRequest();
+            //系统专用url禁止访问
+            String uri=request.getRequestURI();
+            if (uri.indexOf(CommonStaticWord.System_Url) > -1){
+                ZuulUtil.reject("系统专用URL",ctx);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            ZuulUtil.reject("系统错误请联系工作人员",ctx);
         }
-//        String token = request.getParameter("token");
-//        String userId = request.getParameter("userId");
-//        String token = request.getHeader("token");
-//        String userId = request.getHeader("userId");
-//
-//        if(token == null
-//                || StringUtils.isEmpty(token)
-//        ){
-//            reject("没有token",ctx);
-//        }else if(userId == null
-//                || StringUtils.isEmpty(userId)){
-//            reject("没有userId",ctx);
-//        }else if(!token.equals(this.cacheService.getToken(userId))){
-//            reject("token错误",ctx);
-//        }
+
 
         return null;
     }

@@ -62,33 +62,46 @@ public class ZuulUtil {
                             + UserStaticURLUtil.userController_login
                     );
 
-                    loginPaths.add(
-                            "/"
-                            + CommonStaticWord.userServices
-                            + UserStaticURLUtil.userController
-                            + UserStaticURLUtil.userController_resetPassWord
-                    );
                 }
             }
         }
         return loginPaths;
     }
+    public static List<String> getSelectUserCompanyPaths() {
+        if (loginPaths == null) {
+            synchronized (ZuulUtil.class) {
+                if (loginPaths == null) {
+                    loginPaths = new ArrayList<>();
+                    loginPaths.add(
+                            "/"
+                                    + CommonStaticWord.userServices
+                                    + UserStaticURLUtil.companyController
+                                    + UserStaticURLUtil.companyController_selectUserCompany
+                    );
 
+                }
+            }
+        }
+        return loginPaths;
+    }
     public static Boolean shouldFilter() {
-        RequestContext requestContext = RequestContext.getCurrentContext();
-        HttpServletRequest request = requestContext.getRequest();
-        String uri=request.getRequestURI();
-        PathMatcher matcher = new AntPathMatcher();
-        Optional<String> optional =getPaths().stream().filter(t->matcher.match(t,uri)).findFirst();
-        return !optional.isPresent();
+        return !matchUrl(getPaths());
     }
 
     public static Boolean isLogin() {
+        return matchUrl(getLoginPaths());
+    }
+
+    public static Boolean isSelectUserCompany() {
+        return matchUrl(getSelectUserCompanyPaths());
+    }
+
+    public  static Boolean matchUrl(List<String> urls){
         RequestContext requestContext = RequestContext.getCurrentContext();
         HttpServletRequest request = requestContext.getRequest();
         String uri=request.getRequestURI();
         PathMatcher matcher = new AntPathMatcher();
-        Optional<String> optional =getLoginPaths().stream().filter(t->matcher.match(t,uri)).findFirst();
+        Optional<String> optional =urls.stream().filter(t->matcher.match(t,uri)).findFirst();
         return optional.isPresent();
     }
 

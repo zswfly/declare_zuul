@@ -9,12 +9,16 @@ import com.zsw.entitys.common.Result;
 import com.zsw.utils.JwtUtil;
 import com.zsw.utils.ResponseCode;
 import com.zsw.utils.ZuulUtil;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.netflix.zuul.filters.support.FilterConstants;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StreamUtils;
+import org.springframework.util.StringUtils;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
@@ -23,13 +27,15 @@ import java.util.HashMap;
 /**
  * Created by zhangshaowei on 2020/4/25.
  */
-@Component
-public class LoginAddJwtPostFilter extends ZuulFilter {
+//@Component
+public class SelectUserCompanyPostFilter extends ZuulFilter {
 
     @Autowired
     ObjectMapper objectMapper;
     @Autowired
     JwtUtil jwtUtil;
+//    @Autowired
+//    DataFilterConfig dataFilterConfig;
     /**
      * pre：路由之前
      * routing：路由之时
@@ -58,7 +64,7 @@ public class LoginAddJwtPostFilter extends ZuulFilter {
      */
     @Override
     public boolean shouldFilter() {
-        return ZuulUtil.isLogin();
+        return ZuulUtil.isSelectUserCompany();
     }
     /**
      * 执行过滤器逻辑，登录成功时给响应内容增加token
@@ -73,10 +79,11 @@ public class LoginAddJwtPostFilter extends ZuulFilter {
             String body = StreamUtils.copyToString(stream, StandardCharsets.UTF_8);
             Result<HashMap<String, Object>> result = objectMapper.readValue(body, new TypeReference<Result<HashMap<String,Object>>>() {
             });
-            //result.getCode() == ResponseCode.Code_1 表示登录成功
+            //result.getCode() == ResponseCode.Code_1 表示选择成功
             if (result.getCode() == ResponseCode.Code_1) {
                 HashMap<String, Object> jwtClaims = new HashMap<String, Object>() {{
                     put("userId", result.getData().get("userId"));
+                    put("hostUrl", result.getData().get("hostUrl"));
                 }};
                 Date expDate = DateTime.now().plusDays(7).toDate(); //过期时间 7 天
                 String token = jwtUtil.createJWT(expDate, jwtClaims);
