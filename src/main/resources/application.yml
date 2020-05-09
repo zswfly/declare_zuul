@@ -11,24 +11,30 @@ eureka:
       defaultZone: http://localhost:8761/eureka/
 zuul:
   routes:
-#    cache-services:
-#      path: /cache-services/**
-#      serviceId: cache-services
-    message-services:
-      path: /message-services/**
-      serviceId: message-services
     user-services:
       path: /user-services/**
       serviceId: user-services
+
+    cache-services:
+      path: /cache-services/**
+      url: http://localhost
+    message-services:
+      path: /message-services/**
+      url: http://localhost
     order-services:
       path: /order-services/**
-      serviceId: order-services
+      url: http://localhost
     crm-services:
       path: /crm-services/**
-      serviceId: crm-services
-  #需要忽略的头部信息，不在传播到其他服务
+      url: http://localhost
+    #需要忽略的头部信息，不在传播到其他服务
     sensitive-headers: Access-Control-Allow-Origin
     ignored-headers: Access-Control-Allow-Origin,H-APP-Id,Token,APPToken
+    #系统url
+    ignored-patterns: /**/system/**
+#    SimpleHostRoutingFilter:
+#            pre:
+#                disable: true
 # TODO 用命令行启动时配置
 jwtUtil:
   SIGNING_KEY: jskglwejthmndggs8963nko

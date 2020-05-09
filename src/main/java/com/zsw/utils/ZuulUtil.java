@@ -18,6 +18,8 @@ public class ZuulUtil {
     //非拦截地址
     private static List<String> paths = null;
     private static List<String> loginPaths = null;
+    private static List<String> selectUserCompanyPaths = null;
+    private static List<String> bussinessServicesPaths = null;
 
     public static List<String> getPaths() {
         if (paths == null) {
@@ -68,22 +70,40 @@ public class ZuulUtil {
         return loginPaths;
     }
     public static List<String> getSelectUserCompanyPaths() {
-        if (loginPaths == null) {
+        if (selectUserCompanyPaths == null) {
             synchronized (ZuulUtil.class) {
-                if (loginPaths == null) {
-                    loginPaths = new ArrayList<>();
-                    loginPaths.add(
+                if (selectUserCompanyPaths == null) {
+                    selectUserCompanyPaths = new ArrayList<>();
+                    selectUserCompanyPaths.add(
                             "/"
-                                    + CommonStaticWord.userServices
-                                    + UserStaticURLUtil.companyController
-                                    + UserStaticURLUtil.companyController_selectUserCompany
+                            + CommonStaticWord.userServices
+                            + UserStaticURLUtil.companyController
+                            + UserStaticURLUtil.companyController_selectUserCompany
                     );
 
                 }
             }
         }
-        return loginPaths;
+        return selectUserCompanyPaths;
     }
+
+    public static List<String> getBussinessServicesPaths() {
+        if (bussinessServicesPaths == null) {
+            synchronized (ZuulUtil.class) {
+                if (bussinessServicesPaths == null) {
+                    bussinessServicesPaths = new ArrayList<>();
+                    bussinessServicesPaths.add(
+                            "/**/"
+                            + CommonStaticWord.messageServices
+                            + "/**"
+                    );
+
+                }
+            }
+        }
+        return bussinessServicesPaths;
+    }
+
     public static Boolean shouldFilter() {
         return !matchUrl(getPaths());
     }
@@ -94,6 +114,10 @@ public class ZuulUtil {
 
     public static Boolean isSelectUserCompany() {
         return matchUrl(getSelectUserCompanyPaths());
+    }
+
+    public static Boolean isBussinessServicesPaths() {
+        return matchUrl(getBussinessServicesPaths());
     }
 
     public  static Boolean matchUrl(List<String> urls){

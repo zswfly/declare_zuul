@@ -9,6 +9,7 @@ import com.zsw.utils.JwtUtil;
 import com.zsw.utils.ZuulUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
+import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.netflix.zuul.filters.support.FilterConstants;
 import org.springframework.stereotype.Component;
@@ -16,6 +17,7 @@ import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +51,7 @@ public class JwtAuthPreFilter extends ZuulFilter {
      */
     @Override
     public int filterOrder() {
-        return 2;
+        return 1;
     }
     /**
      * shouldFilter：逻辑是否要过滤
@@ -69,6 +71,7 @@ public class JwtAuthPreFilter extends ZuulFilter {
     public Object run() {
         RequestContext ctx = RequestContext.getCurrentContext();
         HttpServletRequest request = ctx.getRequest();
+        //HttpServletResponse response = ctx.getResponse();
         String token = request.getHeader("token");
         Claims claims;
         try {
@@ -93,11 +96,13 @@ public class JwtAuthPreFilter extends ZuulFilter {
                 if (tokenHostUrl == null || StringUtils.isEmpty(tokenHostUrl.toString())) {
                     //服务器地址 有问题
                     ZuulUtil.reject("token验证失败 !!!!!!", ctx);
-                } else {
-                    ctx.addZuulRequestHeader("hostUrl", tokenHostUrl.toString());
                 }
             }
 
+
+
+
+            return null;
         } catch (ExpiredJwtException expiredJwtEx) {
             //log.error("token : {} 过期", token );
             //不对请求进行路由

@@ -27,7 +27,7 @@ import java.util.HashMap;
 /**
  * Created by zhangshaowei on 2020/4/25.
  */
-//@Component
+@Component
 public class SelectUserCompanyPostFilter extends ZuulFilter {
 
     @Autowired
