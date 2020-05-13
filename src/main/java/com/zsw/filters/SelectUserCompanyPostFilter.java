@@ -80,7 +80,7 @@ public class SelectUserCompanyPostFilter extends ZuulFilter {
             Result<HashMap<String, Object>> result = objectMapper.readValue(body, new TypeReference<Result<HashMap<String,Object>>>() {
             });
             //result.getCode() == ResponseCode.Code_1 表示选择成功
-            if (result.getCode() == ResponseCode.Code_1) {
+            if (result.getCode() == ResponseCode.Code_200) {
                 HashMap<String, Object> jwtClaims = new HashMap<String, Object>() {{
                     put("userId", result.getData().get("userId"));
                     put("hostUrl", result.getData().get("hostUrl"));

@@ -134,7 +134,7 @@ public class ZuulUtil {
         Gson gson = new Gson();
         json.setMessage(message);
         ctx.setSendZuulResponse(false);
-        ctx.setResponseStatusCode(401);
+        ctx.setResponseStatusCode(ResponseCode.Code_Bussiness_Error);
         ctx.getResponse().setContentType("application/json;charset=UTF-8");
         ctx.setResponseBody(gson.toJson(json));
     }
