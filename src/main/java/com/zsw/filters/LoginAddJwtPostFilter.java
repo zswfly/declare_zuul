@@ -74,7 +74,7 @@ public class LoginAddJwtPostFilter extends ZuulFilter {
             Result<HashMap<String, Object>> result = objectMapper.readValue(body, new TypeReference<Result<HashMap<String,Object>>>() {
             });
             //result.getCode() == ResponseCode.Code_1 表示登录成功
-            if (result.getCode() == ResponseCode.Code_1) {
+            if (ResponseCode.Code_200.equals(result.getCode()) ) {
                 HashMap<String, Object> jwtClaims = new HashMap<String, Object>() {{
                     put("userId", result.getData().get("userId"));
                 }};
