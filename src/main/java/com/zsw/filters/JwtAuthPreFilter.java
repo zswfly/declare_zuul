@@ -92,7 +92,7 @@ public class JwtAuthPreFilter extends ZuulFilter {
             }
 
             //选择公司时不用校验
-            if(!ZuulUtil.isSelectUserCompany()) {
+            if(!ZuulUtil.isNotCheckCompanyHostPaths()) {
                 if (tokenHostUrl == null || StringUtils.isEmpty(tokenHostUrl.toString())) {
                     //服务器地址 有问题
                     ZuulUtil.reject("token验证失败 !!!!!!", ctx);

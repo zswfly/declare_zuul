@@ -20,6 +20,7 @@ public class ZuulUtil {
     private static List<String> loginPaths = null;
     private static List<String> selectUserCompanyPaths = null;
     private static List<String> bussinessServicesPaths = null;
+    private static List<String> notCheckCompanyHostPaths = null;
 
     public static List<String> getPaths() {
         if (paths == null) {
@@ -104,6 +105,30 @@ public class ZuulUtil {
         return bussinessServicesPaths;
     }
 
+
+    public static List<String> getNotCheckCompanyHostPaths() {
+        if (notCheckCompanyHostPaths == null) {
+            synchronized (ZuulUtil.class) {
+                if (notCheckCompanyHostPaths == null) {
+                    notCheckCompanyHostPaths = new ArrayList<>();
+                    notCheckCompanyHostPaths.add(
+                            "/"
+                            + CommonStaticWord.userServices
+                            + UserStaticURLUtil.companyController
+                            + UserStaticURLUtil.companyController_selectUserCompany
+                    );
+                    notCheckCompanyHostPaths.add(
+                            "/"
+                            + CommonStaticWord.userServices
+                            + UserStaticURLUtil.companyController
+                            + UserStaticURLUtil.companyController_getUserCompanys
+                    );
+                }
+            }
+        }
+        return notCheckCompanyHostPaths;
+    }
+
     public static Boolean shouldFilter() {
         return !matchUrl(getPaths());
     }
@@ -119,6 +144,11 @@ public class ZuulUtil {
     public static Boolean isBussinessServicesPaths() {
         return matchUrl(getBussinessServicesPaths());
     }
+
+    public static Boolean isNotCheckCompanyHostPaths() {
+        return matchUrl(getNotCheckCompanyHostPaths());
+    }
+
 
     public  static Boolean matchUrl(List<String> urls){
         RequestContext requestContext = RequestContext.getCurrentContext();
