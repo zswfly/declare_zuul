@@ -10,6 +10,9 @@ eureka:
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
 zuul:
+  host:
+    socket-timeout-millis: 4000
+    connect-timeout-millis: 6000
   routes:
     user-services:
       path: /user-services/**
@@ -38,3 +41,9 @@ zuul:
 # TODO 用命令行启动时配置
 jwtUtil:
   SIGNING_KEY: jskglwejthmndggs8963nko
+
+
+#  #默认1000
+#  zuul.host.socket-timeout-millis=2000
+#  #默认2000
+#  zuul.host.connect-timeout-millis=4000
