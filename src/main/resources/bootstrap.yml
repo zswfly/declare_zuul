@@ -1,0 +1,12 @@
+spring:
+  application:
+    # 对应config server所获取的配置文件的 {application}
+    name: zuul
+  cloud:
+    config:
+      # 指 config server 地址
+      uri: http://localhost:8760/
+      # 指定 config server 里的 {profile}
+      profile: dev
+      # 指定Git仓库分支
+      label: master
