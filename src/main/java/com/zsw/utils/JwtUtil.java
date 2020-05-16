@@ -5,6 +5,7 @@ import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -14,6 +15,9 @@ import java.util.Map;
  * Created by zhangshaowei on 2020/4/25.
  */
 @Component
+//@EnableAutoConfiguration
+//表示开启ConfigService去获取文件的配置信息
+//@EnableConfigServer
 public class JwtUtil {
     /**
      * 签名用的密钥
@@ -62,5 +66,6 @@ public class JwtUtil {
                 .parseClaimsJws(token).getBody();
         return claims;
     }
+
 
 }
