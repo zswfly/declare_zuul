@@ -99,6 +99,12 @@ public class ZuulUtil {
                             + "/**"
                     );
 
+                    bussinessServicesPaths.add(
+                            "/**/"
+                                    + CommonStaticWord.userServices
+                                    + "/**"
+                    );
+
                 }
             }
         }

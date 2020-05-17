@@ -423,7 +423,7 @@ public class CustomHostRoutingFilter extends SimpleHostRoutingFilter{
 //    }
     private HttpHost getHttpHost(URL host,HttpServletRequest request) {
         HttpHost httpHost = null;
-        if(ZuulUtil.isBussinessServicesPaths()){
+        if(!ZuulUtil.isBussinessServicesPaths()){
             String token = request.getHeader("token");
             Claims claims = jwtUtil.parseJWT(token);
             String tokenHostUrl = claims.get("hostUrl").toString();
