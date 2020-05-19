@@ -32,12 +32,13 @@ public class ZuulApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ZuulApplication.class, args);
 	}
-//	@Bean
-//	@LoadBalanced
-//	public RestTemplate restTemplate(){
-//		return new RestTemplate();
-//	}
-//
+
+	@Bean
+	@LoadBalanced
+	public RestTemplate restTemplate(){
+		return new RestTemplate();
+	}
+
 
 	@Bean
 	public FilterRegistrationBean corsFilter() {

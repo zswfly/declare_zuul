@@ -5,21 +5,24 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 import com.zsw.entitys.common.Result;
-import com.zsw.utils.JwtUtil;
-import com.zsw.utils.ZuulUtil;
+import com.zsw.utils.*;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.netflix.zuul.filters.support.FilterConstants;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -32,6 +35,9 @@ public class JwtAuthPreFilter extends ZuulFilter {
     ObjectMapper objectMapper;
     @Autowired
     JwtUtil jwtUtil;
+
+    @Autowired
+    RestTemplate restTemplate;
     /**
      * pre：路由之前
      * routing：路由之时
@@ -83,6 +89,7 @@ public class JwtAuthPreFilter extends ZuulFilter {
             //请求头加入userId，传给业务服务
             Object tokenUserId = claims.get("userId");
             Object tokenHostUrl = claims.get("hostUrl");
+            Object rememberToken = claims.get("rememberToken");
 
             if(tokenUserId == null || StringUtils.isEmpty(tokenUserId.toString())){
                 //userId 有问题
@@ -91,8 +98,30 @@ public class JwtAuthPreFilter extends ZuulFilter {
                 ctx.addZuulRequestHeader("userId", tokenUserId.toString());
             }
 
+            if(rememberToken == null || StringUtils.isEmpty(rememberToken.toString())){
+                //验证码校验
+                Map<String, String > param = new HashMap<>();
+                param.put("rememberToken",rememberToken.toString());
+                param.put("userId",tokenUserId.toString());
+                ResponseEntity<Boolean> checkUserTokenResult  = this.restTemplate.postForEntity(
+                        CommonStaticWord.HTTP + CommonStaticWord.userServices
+                                + UserStaticURLUtil.userController
+                                + UserStaticURLUtil.userController_checkRememberToken
+                        ,param,Boolean.class);
+                if(checkUserTokenResult != null
+                        && checkUserTokenResult.getBody()
+                        )return Boolean.TRUE;
+                //rememberToken 有问题
+                ZuulUtil.reject("token验证失败 !!!!!!",ctx);
+            }else{
+                ctx.addZuulRequestHeader("rememberToken", rememberToken.toString());
+            }
+
+
             //选择公司时不用校验
             if(!ZuulUtil.isNotCheckCompanyHostPaths()) {
+
+
                 if (tokenHostUrl == null || StringUtils.isEmpty(tokenHostUrl.toString())) {
                     //服务器地址 有问题
                     ZuulUtil.reject("token验证失败 !!!!!!", ctx);

@@ -83,6 +83,7 @@ public class SelectUserCompanyPostFilter extends ZuulFilter {
             if (ResponseCode.Code_200.equals(result.getCode()) ) {
                 HashMap<String, Object> jwtClaims = new HashMap<String, Object>() {{
                     put("userId", result.getData().get("userId"));
+                    put("rememberToken", result.getData().get("rememberToken"));
                     put("hostUrl", result.getData().get("hostUrl"));
                 }};
                 Date expDate = DateTime.now().plusDays(7).toDate(); //过期时间 7 天
