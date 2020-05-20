@@ -99,6 +99,9 @@ public class JwtAuthPreFilter extends ZuulFilter {
             }
 
             if(rememberToken == null || StringUtils.isEmpty(rememberToken.toString())){
+                //rememberToken 有问题
+                ZuulUtil.reject("token验证失败 !!!!!!",ctx);
+            }else{
                 //验证码校验
                 Map<String, String > param = new HashMap<>();
                 param.put("rememberToken",rememberToken.toString());
@@ -108,12 +111,10 @@ public class JwtAuthPreFilter extends ZuulFilter {
                                 + UserStaticURLUtil.userController
                                 + UserStaticURLUtil.userController_checkRememberToken
                         ,param,Boolean.class);
-                if(checkUserTokenResult != null
-                        && checkUserTokenResult.getBody()
-                        )return Boolean.TRUE;
-                //rememberToken 有问题
-                ZuulUtil.reject("token验证失败 !!!!!!",ctx);
-            }else{
+                if(checkUserTokenResult == null
+                        || checkUserTokenResult.getBody() == null
+                        || !checkUserTokenResult.getBody()
+                        )ZuulUtil.reject("token验证失败 !!!!!!",ctx);
                 ctx.addZuulRequestHeader("rememberToken", rememberToken.toString());
             }
 

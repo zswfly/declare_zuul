@@ -90,6 +90,9 @@ public class SelectUserCompanyPostFilter extends ZuulFilter {
                 String token = jwtUtil.createJWT(expDate, jwtClaims);
                 //body json增加token
                 result.getData().put("token", token);
+
+                result.getData().remove("rememberToken");
+
                 //序列化body json,设置到响应body中
                 body = objectMapper.writeValueAsString(result);
                 ctx.setResponseBody(body);
