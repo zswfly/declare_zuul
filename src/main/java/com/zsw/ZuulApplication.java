@@ -23,8 +23,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @SpringBootApplication(scanBasePackages = "com.zsw.**")
-@EnableEurekaClient
 @EnableZuulProxy
+@EnableEurekaClient
 @EnableDiscoveryClient
 @Configuration
 public class ZuulApplication {

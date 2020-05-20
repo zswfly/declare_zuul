@@ -10,3 +10,6 @@ spring:
       profile: dev
       # 指定Git仓库分支
       label: master
+      username: 123456
+      password: 123456
+
