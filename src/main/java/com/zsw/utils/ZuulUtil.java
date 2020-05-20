@@ -33,13 +33,20 @@ public class ZuulUtil {
                             + CommonStaticWord.userServices
                             + UserStaticURLUtil.userController
                             + UserStaticURLUtil.userController_login);
-//重设密码没token
+
+                    //重设密码没token
                     paths.add(
                             "/"
                             + CommonStaticWord.userServices
                             + UserStaticURLUtil.userController
                             + UserStaticURLUtil.userController_resetPassWord);
 
+                    //发送短信不设密码
+                    paths.add(
+                            "/"
+                                    + CommonStaticWord.messageServices
+                                    + MessageStaticURLUtil.hwyMessageController
+                                    + MessageStaticURLUtil.hwyMessageController_sendVerifyCode);
 
                     paths.add("/**/*.css");
                     paths.add("/**/*.jpg");
