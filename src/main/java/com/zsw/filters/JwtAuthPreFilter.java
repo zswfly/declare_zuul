@@ -90,6 +90,7 @@ public class JwtAuthPreFilter extends ZuulFilter {
             Object tokenUserId = claims.get("userId");
             Object tokenHostUrl = claims.get("hostUrl");
             Object rememberToken = claims.get("rememberToken");
+            Object companyId = claims.get("companyId");
 
             if(tokenUserId == null || StringUtils.isEmpty(tokenUserId.toString())){
                 //userId 有问题
@@ -122,10 +123,12 @@ public class JwtAuthPreFilter extends ZuulFilter {
             //选择公司时不用校验
             if(!ZuulUtil.isNotCheckCompanyHostPaths()) {
 
-
-                if (tokenHostUrl == null || StringUtils.isEmpty(tokenHostUrl.toString())) {
+                if (tokenHostUrl == null || StringUtils.isEmpty(tokenHostUrl.toString())
+                        ||companyId == null || StringUtils.isEmpty(companyId.toString())) {
                     //服务器地址 有问题
                     ZuulUtil.reject("token验证失败 !!!!!!", ctx);
+                }else{
+                    ctx.addZuulRequestHeader("companyId", companyId.toString());
                 }
             }
 

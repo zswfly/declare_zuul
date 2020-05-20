@@ -85,6 +85,7 @@ public class SelectUserCompanyPostFilter extends ZuulFilter {
                     put("userId", result.getData().get("userId"));
                     put("rememberToken", result.getData().get("rememberToken"));
                     put("hostUrl", result.getData().get("hostUrl"));
+                    put("companyId", result.getData().get("companyId"));
                 }};
                 Date expDate = DateTime.now().plusDays(7).toDate(); //过期时间 7 天
                 String token = jwtUtil.createJWT(expDate, jwtClaims);
