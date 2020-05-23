@@ -97,8 +97,8 @@ public class SelectUserCompanyPostFilter extends ZuulFilter {
                 //body json增加token
                 result.getData().put("token", token);
 
-                result.getData().remove("userId");
-                result.getData().remove("companyId");
+                //result.getData().remove("userId");
+                //result.getData().remove("companyId");
                 result.getData().remove("hostUrl");
                 result.getData().remove("rememberToken");
 
