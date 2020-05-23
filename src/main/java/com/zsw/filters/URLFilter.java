@@ -8,6 +8,8 @@ import com.zsw.utils.JwtUtil;
 import com.zsw.utils.ZuulUtil;
 import io.jsonwebtoken.Claims;
 import org.apache.http.HttpStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.netflix.zuul.filters.support.FilterConstants;
 
@@ -19,6 +21,10 @@ import javax.servlet.http.HttpServletResponse;
  */
 //@Component
 public class URLFilter extends ZuulFilter{
+
+    private static final Logger LOG = LoggerFactory.getLogger(URLFilter.class);
+
+
 
     @Autowired
     ObjectMapper objectMapper;
@@ -74,6 +80,7 @@ public class URLFilter extends ZuulFilter{
             return null;
         }catch (Exception e){
             e.printStackTrace();
+            LOG.error("error", e);
             ZuulUtil.reject("系统错误请联系工作人员",ctx);
         }
 

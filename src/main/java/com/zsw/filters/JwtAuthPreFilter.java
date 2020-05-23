@@ -10,6 +10,8 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.http.HttpStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.netflix.zuul.filters.support.FilterConstants;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +33,10 @@ import java.util.Map;
  */
 @Component
 public class JwtAuthPreFilter extends ZuulFilter {
+
+
+    private static final Logger LOG = LoggerFactory.getLogger(LoginAddJwtPostFilter.class);
+
     @Autowired
     ObjectMapper objectMapper;
     @Autowired
@@ -141,10 +147,12 @@ public class JwtAuthPreFilter extends ZuulFilter {
             //不对请求进行路由
             ctx.setSendZuulResponse(false);
             ZuulUtil.reject("token过期",ctx);
+            LOG.error("error", expiredJwtEx);
         } catch (Exception ex) {
             //不对请求进行路由
             ctx.setSendZuulResponse(false);
             ZuulUtil.reject("token验证失败",ctx);
+            LOG.error("error", ex);
         }
         return null;
     }
@@ -165,6 +173,7 @@ public class JwtAuthPreFilter extends ZuulFilter {
             return objectMapper.writeValueAsString(o);
         } catch (JsonProcessingException e) {
             //log.error("json序列化失败", e);
+            LOG.error("error", e);
             return null;
         }
     }

@@ -24,6 +24,8 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicHttpEntityEnclosingRequest;
 import org.apache.http.message.BasicHttpRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.commons.httpclient.ApacheHttpClientConnectionManagerFactory;
 import org.springframework.cloud.commons.httpclient.ApacheHttpClientFactory;
@@ -52,6 +54,9 @@ import java.util.regex.Pattern;
  * Created by zhangshaowei on 2020/5/7.
  */
 public class CustomHostRoutingFilter extends SimpleHostRoutingFilter{
+
+    private static final Logger LOG = LoggerFactory.getLogger(CustomHostRoutingFilter.class);
+
     @Autowired
     JwtUtil jwtUtil;
 
@@ -102,13 +107,13 @@ public class CustomHostRoutingFilter extends SimpleHostRoutingFilter{
                 try {
                     this.httpClient.close();
                 } catch (IOException var6) {
-                    //log.error("error closing client", var6);
+                    LOG.error("error closing client", var6);
                 }
 
                 try {
                     this.connectionManager.shutdown();
                 } catch (RuntimeException var5) {
-                    //log.error("error shutting down connection manager", var5);
+                    LOG.error("error shutting down connection manager", var5);
                 }
 
                 this.connectionManager = this.newConnectionManager();
@@ -251,7 +256,7 @@ public class CustomHostRoutingFilter extends SimpleHostRoutingFilter{
 
         InputStreamEntity entity = new InputStreamEntity(requestEntity, contentLength, contentType);
         HttpRequest httpRequest = this.buildHttpRequest(verb, uri, entity, headers, params, request);
-        //log.debug(httpHost.getHostName() + " " + httpHost.getPort() + " " + httpHost.getSchemeName());
+        LOG.debug(httpHost.getHostName() + " " + httpHost.getPort() + " " + httpHost.getSchemeName());
         CloseableHttpResponse zuulResponse = this.forwardRequest(httpclient, httpHost, httpRequest);
         this.helper.appendDebug(info, zuulResponse.getStatusLine().getStatusCode(), this.revertHeaders(zuulResponse.getAllHeaders()));
         return zuulResponse;
@@ -307,7 +312,7 @@ public class CustomHostRoutingFilter extends SimpleHostRoutingFilter{
                 break;
             default:
                 httpRequest = new BasicHttpRequest(verb, uriWithQueryString);
-                //log.debug(uriWithQueryString);
+                LOG.debug(uriWithQueryString);
         }
 
         ((HttpRequest)httpRequest).setHeaders(this.convertHeaders(headers));
@@ -369,7 +374,7 @@ public class CustomHostRoutingFilter extends SimpleHostRoutingFilter{
                 requestEntity = request.getInputStream();
             }
         } catch (IOException var4) {
-            //log.error("error during getRequestBody", var4);
+            LOG.error("error during getRequestBody", var4);
         }
 
         return (InputStream)requestEntity;

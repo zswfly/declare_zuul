@@ -12,6 +12,8 @@ import com.zsw.utils.ZuulUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.netflix.zuul.filters.support.FilterConstants;
 import org.springframework.stereotype.Component;
@@ -29,6 +31,9 @@ import java.util.HashMap;
  */
 @Component
 public class SelectUserCompanyPostFilter extends ZuulFilter {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SelectUserCompanyPostFilter.class);
+
 
     @Autowired
     ObjectMapper objectMapper;
@@ -104,6 +109,7 @@ public class SelectUserCompanyPostFilter extends ZuulFilter {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            LOG.error("error", e);
             ZuulUtil.reject("系统错误请联系工作人员",ctx);
         }
         return null;
