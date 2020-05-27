@@ -8,6 +8,7 @@ import com.zsw.entitys.common.Result;
 import com.zsw.utils.*;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
+import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,7 +94,8 @@ public class UserJwtAuthPreFilter extends ZuulFilter {
             Object rememberToken = claims.get("rememberToken");
             Object companyId = claims.get("companyId");
 
-            if(tokenUserId == null || StringUtils.isEmpty(tokenUserId.toString())){
+            if(tokenUserId == null || StringUtils.isEmpty(tokenUserId.toString())
+                ||Integer.valueOf(NumberUtils.toInt(tokenUserId.toString(), 0)) < 1){
                 //userId 有问题
                 ZuulUtil.reject("token验证失败 !!!!!!",ctx);
             }else{
@@ -125,7 +127,8 @@ public class UserJwtAuthPreFilter extends ZuulFilter {
             if(!ZuulUtil.isNotCheckCompanyHostPaths()) {
 
                 if (tokenHostUrl == null || StringUtils.isEmpty(tokenHostUrl.toString())
-                        ||companyId == null || StringUtils.isEmpty(companyId.toString())) {
+                        ||companyId == null || StringUtils.isEmpty(companyId.toString())
+                        ||Integer.valueOf(NumberUtils.toInt(companyId.toString(), 0)) < 1) {
                     //服务器地址 有问题
                     ZuulUtil.reject("token验证失败 !!!!!!", ctx);
                 }else{

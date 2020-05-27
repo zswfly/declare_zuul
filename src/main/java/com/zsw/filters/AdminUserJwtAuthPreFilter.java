@@ -11,6 +11,7 @@ import com.zsw.utils.UserStaticURLUtil;
 import com.zsw.utils.ZuulUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
+import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,8 +94,9 @@ public class AdminUserJwtAuthPreFilter extends ZuulFilter {
             //请求头加入userId，传给业务服务
             Object tokenAdminUserId = claims.get("adminUserId");
             Object rememberToken = claims.get("rememberToken");
-
-            if(tokenAdminUserId == null || StringUtils.isEmpty(tokenAdminUserId.toString())){
+            ;
+            if(tokenAdminUserId == null || StringUtils.isEmpty(tokenAdminUserId.toString())
+                    ||Integer.valueOf(NumberUtils.toInt(tokenAdminUserId.toString(), 0)) < 1){
                 //adminUserId 有问题
                 ZuulUtil.reject("token验证失败 !!!!!!",ctx);
             }else{
