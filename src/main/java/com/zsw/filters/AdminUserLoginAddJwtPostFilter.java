@@ -26,9 +26,9 @@ import java.util.HashMap;
  * Created by zhangshaowei on 2020/4/25.
  */
 @Component
-public class LoginAddJwtPostFilter extends ZuulFilter {
+public class AdminUserLoginAddJwtPostFilter extends ZuulFilter {
 
-    private static final Logger LOG = LoggerFactory.getLogger(LoginAddJwtPostFilter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AdminUserLoginAddJwtPostFilter.class);
 
 
     @Autowired
@@ -63,7 +63,7 @@ public class LoginAddJwtPostFilter extends ZuulFilter {
      */
     @Override
     public boolean shouldFilter() {
-        return ZuulUtil.isLogin();
+        return ZuulUtil.isAdminUserLogin();
     }
     /**
      * 执行过滤器逻辑，登录成功时给响应内容增加token
@@ -78,10 +78,9 @@ public class LoginAddJwtPostFilter extends ZuulFilter {
             String body = StreamUtils.copyToString(stream, StandardCharsets.UTF_8);
             Result<HashMap<String, Object>> result = objectMapper.readValue(body, new TypeReference<Result<HashMap<String,Object>>>() {
             });
-            //result.getCode() == ResponseCode.Code_1 表示登录成功
             if (ResponseCode.Code_200.equals(result.getCode()) ) {
                 HashMap<String, Object> jwtClaims = new HashMap<String, Object>() {{
-                    put("userId", result.getData().get("userId"));
+                    put("adminUserId", result.getData().get("adminUserId"));
                     put("rememberToken", result.getData().get("rememberToken"));
                 }};
                 Date expDate = DateTime.now().plusDays(7).toDate(); //过期时间 7 天
@@ -89,7 +88,6 @@ public class LoginAddJwtPostFilter extends ZuulFilter {
                 //body json增加token
                 result.getData().put("token", token);
 
-                //result.getData().remove("userId");
                 result.getData().remove("rememberToken");
 
                 //序列化body json,设置到响应body中

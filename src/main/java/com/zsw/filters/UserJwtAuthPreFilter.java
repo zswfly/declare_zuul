@@ -8,8 +8,6 @@ import com.zsw.entitys.common.Result;
 import com.zsw.utils.*;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
-import org.apache.commons.lang.math.NumberUtils;
-import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,21 +19,18 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
  * Created by zhangshaowei on 2020/4/25.
  */
 @Component
-public class JwtAuthPreFilter extends ZuulFilter {
+public class UserJwtAuthPreFilter extends ZuulFilter {
 
 
-    private static final Logger LOG = LoggerFactory.getLogger(LoginAddJwtPostFilter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(UserLoginAddJwtPostFilter.class);
 
     @Autowired
     ObjectMapper objectMapper;
@@ -72,7 +67,7 @@ public class JwtAuthPreFilter extends ZuulFilter {
      */
     @Override
     public boolean shouldFilter() {
-        return ZuulUtil.shouldFilter();
+        return ZuulUtil.shouldFilter() && !ZuulUtil.isAdminPaths();
     }
     /**
      * 执行过滤器逻辑，验证token
@@ -143,8 +138,6 @@ public class JwtAuthPreFilter extends ZuulFilter {
 
             return null;
         } catch (ExpiredJwtException expiredJwtEx) {
-            //log.error("token : {} 过期", token );
-            //不对请求进行路由
             ctx.setSendZuulResponse(false);
             ZuulUtil.reject("token过期",ctx);
             LOG.error("error", expiredJwtEx);
@@ -156,26 +149,7 @@ public class JwtAuthPreFilter extends ZuulFilter {
         }
         return null;
     }
-    /**
-     * 将异常信息响应给前端
-     */
-    private void responseError(RequestContext ctx, Integer code, String message) {
-        HttpServletResponse response = ctx.getResponse();
-        Result errResult = new Result();
-        errResult.setCode(code);
-        errResult.setMessage(message);
-        ctx.setResponseBody(toJsonString(errResult));
-        response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-        response.setContentType("application/json;charset=utf-8");
-    }
-    private String toJsonString(Object o) {
-        try {
-            return objectMapper.writeValueAsString(o);
-        } catch (JsonProcessingException e) {
-            //log.error("json序列化失败", e);
-            LOG.error("error", e);
-            return null;
-        }
-    }
+
+
 
 }

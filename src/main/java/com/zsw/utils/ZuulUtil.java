@@ -1,12 +1,18 @@
 package com.zsw.utils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.netflix.zuul.context.RequestContext;
 import com.zsw.entitys.common.ResponseJson;
+import com.zsw.entitys.common.Result;
+import org.slf4j.Logger;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -15,12 +21,38 @@ import java.util.Optional;
  * Created by zhangshaowei on 2020/4/25.
  */
 public class ZuulUtil {
+
+    public static void main(String[] args) {
+        List<String> test = new ArrayList<>();
+        test.add(
+                 "/**"
+                + UserStaticURLUtil.admin
+                + "/**"
+                );
+        String uri = "/"
+                + CommonStaticWord.userServices
+//                + UserStaticURLUtil.adminUserController
+//                + "/adminUserssss"
+                + UserStaticURLUtil.adminUserController_loginOut
+                ;
+        System.out.println();
+        System.out.println(uri);
+        System.out.println(test);
+        System.out.println(matchUrlTest(uri,test));
+    }
+
+
     //非拦截地址
     private static List<String> paths = null;
-    private static List<String> loginPaths = null;
+    private static List<String> adminPaths = null;
+    private static List<String> userLoginPaths = null;
+    private static List<String> adminUserLoginPaths = null;
     private static List<String> selectUserCompanyPaths = null;
     private static List<String> bussinessServicesPaths = null;
     private static List<String> notCheckCompanyHostPaths = null;
+
+
+
 
     public static List<String> getPaths() {
         if (paths == null) {
@@ -41,7 +73,21 @@ public class ZuulUtil {
                             + UserStaticURLUtil.userController
                             + UserStaticURLUtil.userController_resetPassWord);
 
-                    //发送短信不设密码
+                    paths.add(
+                            "/"
+                                    + CommonStaticWord.userServices
+                                    + UserStaticURLUtil.adminUserController
+                                    + UserStaticURLUtil.adminUserController_login);
+
+                    //重设密码没token
+                    paths.add(
+                            "/"
+                                    + CommonStaticWord.userServices
+                                    + UserStaticURLUtil.adminUserController
+                                    + UserStaticURLUtil.adminUserController_resetPassWord);
+
+
+                    //发送短信不设没token
                     paths.add(
                             "/"
                                     + CommonStaticWord.messageServices
@@ -60,12 +106,28 @@ public class ZuulUtil {
         return paths;
     }
 
-    public static List<String> getLoginPaths() {
-        if (loginPaths == null) {
+    public static List<String> getAdminPaths() {
+        if (adminPaths == null) {
             synchronized (ZuulUtil.class) {
-                if (loginPaths == null) {
-                    loginPaths = new ArrayList<>();
-                    loginPaths.add(
+                if (adminPaths == null) {
+                    adminPaths = new ArrayList<>();
+                    adminPaths.add("/**"
+                            + UserStaticURLUtil.admin
+                            + "/**"
+                    );
+                }
+            }
+        }
+        return adminPaths;
+    }
+
+
+    public static List<String> getUserLoginPaths() {
+        if (userLoginPaths == null) {
+            synchronized (ZuulUtil.class) {
+                if (userLoginPaths == null) {
+                    userLoginPaths = new ArrayList<>();
+                    userLoginPaths.add(
                             "/"
                             + CommonStaticWord.userServices
                             + UserStaticURLUtil.userController
@@ -75,8 +137,29 @@ public class ZuulUtil {
                 }
             }
         }
-        return loginPaths;
+        return userLoginPaths;
     }
+
+    public static List<String> getAdminUserLoginPaths() {
+        if (adminUserLoginPaths == null) {
+            synchronized (ZuulUtil.class) {
+                if (adminUserLoginPaths == null) {
+                    adminUserLoginPaths = new ArrayList<>();
+                    adminUserLoginPaths.add(
+                            "/"
+                            + CommonStaticWord.userServices
+                            + UserStaticURLUtil.adminUserController
+                            + UserStaticURLUtil.adminUserController_login
+                    );
+
+                }
+            }
+        }
+        return adminUserLoginPaths;
+    }
+
+
+
     public static List<String> getSelectUserCompanyPaths() {
         if (selectUserCompanyPaths == null) {
             synchronized (ZuulUtil.class) {
@@ -146,8 +229,16 @@ public class ZuulUtil {
         return !matchUrl(getPaths());
     }
 
-    public static Boolean isLogin() {
-        return matchUrl(getLoginPaths());
+    public static Boolean isAdminPaths() {
+        return matchUrl(getAdminPaths());
+    }
+
+    public static Boolean isUserLogin() {
+        return matchUrl(getUserLoginPaths());
+    }
+
+    public static Boolean isAdminUserLogin() {
+        return matchUrl(getAdminUserLoginPaths());
     }
 
     public static Boolean isSelectUserCompany() {
@@ -172,6 +263,13 @@ public class ZuulUtil {
         return optional.isPresent();
     }
 
+
+    public  static Boolean matchUrlTest(String uri,List<String> urls){
+        PathMatcher matcher = new AntPathMatcher();
+        Optional<String> optional =urls.stream().filter(t->matcher.match(t,uri)).findFirst();
+        return optional.isPresent();
+    }
+
     public static void reject(String message,RequestContext ctx){
         ResponseJson json = new ResponseJson();
         Gson gson = new Gson();
@@ -180,6 +278,37 @@ public class ZuulUtil {
         ctx.setResponseStatusCode(ResponseCode.Code_Bussiness_Error);
         ctx.getResponse().setContentType("application/json;charset=UTF-8");
         ctx.setResponseBody(gson.toJson(json));
+    }
+
+
+
+
+
+
+
+
+
+
+    /**
+     * 将异常信息响应给前端
+     */
+    private void  responseError(RequestContext ctx, Integer code, String message, ObjectMapper objectMapper,Logger LOG ) {
+        HttpServletResponse response = ctx.getResponse();
+        Result errResult = new Result();
+        errResult.setCode(code);
+        errResult.setMessage(message);
+        ctx.setResponseBody(toJsonString(errResult,objectMapper,LOG));
+        response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+        response.setContentType("application/json;charset=utf-8");
+    }
+    private String toJsonString(Object o, ObjectMapper objectMapper,Logger LOG ) {
+        try {
+            return objectMapper.writeValueAsString(o);
+        } catch (JsonProcessingException e) {
+            //log.error("json序列化失败", e);
+            LOG.error("error", e);
+            return null;
+        }
     }
 
 }
