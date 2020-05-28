@@ -168,8 +168,8 @@ public class ZuulUtil {
                     selectUserCompanyPaths.add(
                             "/"
                             + CommonStaticWord.userServices
-                            + UserStaticURLUtil.companyController
-                            + UserStaticURLUtil.companyController_selectUserCompany
+                            + UserStaticURLUtil.userController
+                            + UserStaticURLUtil.userController_selectUserCompany
                     );
 
                 }
@@ -210,14 +210,14 @@ public class ZuulUtil {
                     notCheckCompanyHostPaths.add(
                             "/"
                             + CommonStaticWord.userServices
-                            + UserStaticURLUtil.companyController
-                            + UserStaticURLUtil.companyController_selectUserCompany
+                            + UserStaticURLUtil.userController
+                            + UserStaticURLUtil.userController_selectUserCompany
                     );
                     notCheckCompanyHostPaths.add(
                             "/"
                             + CommonStaticWord.userServices
-                            + UserStaticURLUtil.companyController
-                            + UserStaticURLUtil.companyController_getUserCompanys
+                            + UserStaticURLUtil.userController
+                            + UserStaticURLUtil.userController_getUserCompanys
                     );
                 }
             }
