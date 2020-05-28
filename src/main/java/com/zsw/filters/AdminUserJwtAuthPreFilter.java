@@ -110,7 +110,7 @@ public class AdminUserJwtAuthPreFilter extends ZuulFilter {
                 //验证码校验
                 Map<String, String > param = new HashMap<>();
                 param.put("rememberToken",rememberToken.toString());
-                param.put("tokenAdminUserId",tokenAdminUserId.toString());
+                param.put("adminUserId",tokenAdminUserId.toString());
                 ResponseEntity<Boolean> checkUserTokenResult  = this.restTemplate.postForEntity(
                         CommonStaticWord.HTTP + CommonStaticWord.userServices
                                 + UserStaticURLUtil.adminUserController
