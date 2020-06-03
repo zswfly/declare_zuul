@@ -3,6 +3,7 @@ package com.zsw.utils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import com.netflix.hystrix.contrib.javanica.utils.CommonUtils;
 import com.netflix.zuul.context.RequestContext;
 import com.zsw.entitys.common.ResponseJson;
 import com.zsw.entitys.common.Result;
