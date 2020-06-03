@@ -25,16 +25,18 @@ public class ZuulUtil {
     public static void main(String[] args) {
         List<String> test = new ArrayList<>();
         test.add(
-                 "/**"
+                 "**"
                 + UserStaticURLUtil.admin
                 + "/**"
                 );
-        String uri = "/"
-                + CommonStaticWord.userServices
-//                + UserStaticURLUtil.adminUserController
-//                + "/adminUserssss"
-                + UserStaticURLUtil.adminUserController_loginOut
-                ;
+//        String uri = "/"
+//                + CommonStaticWord.userServices
+////                + UserStaticURLUtil.adminUserController
+////                + "/adminUserssss"
+//                + UserStaticURLUtil.adminUserController_loginOut
+//                ;
+        String uri = "http://localhost:9529/api/dev/user-services/admin/adminUser/getAdminUser/1";
+
         System.out.println();
         System.out.println(uri);
         System.out.println(test);
@@ -111,7 +113,7 @@ public class ZuulUtil {
             synchronized (ZuulUtil.class) {
                 if (adminPaths == null) {
                     adminPaths = new ArrayList<>();
-                    adminPaths.add("/**"
+                    adminPaths.add("**"
                             + UserStaticURLUtil.admin
                             + "/**"
                     );
