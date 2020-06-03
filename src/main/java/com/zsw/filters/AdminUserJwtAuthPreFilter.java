@@ -113,8 +113,8 @@ public class AdminUserJwtAuthPreFilter extends ZuulFilter {
                 param.put("adminUserId",tokenAdminUserId.toString());
                 ResponseEntity<Boolean> checkUserTokenResult  = this.restTemplate.postForEntity(
                         CommonStaticWord.HTTP + CommonStaticWord.userServices
-                                + UserStaticURLUtil.adminUserController
-                                + UserStaticURLUtil.adminUserController_checkRememberToken
+                                + UserStaticURLUtil.userController
+                                + UserStaticURLUtil.userController_checkRememberToken
                         ,param,Boolean.class);
                 if(checkUserTokenResult == null
                         || checkUserTokenResult.getBody() == null
