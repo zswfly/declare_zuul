@@ -198,6 +198,17 @@ public class ZuulUtil {
                                     + CommonStaticWord.userServices
                                     + "/**"
                     );
+                    //TODO 修改  暂时走同一个注册中心
+                    bussinessServicesPaths.add(
+                            "/**/"
+                                    + CommonStaticWord.crmServices
+                                    + "/**"
+                    );
+                    bussinessServicesPaths.add(
+                            "/**/"
+                                    + CommonStaticWord.dictionaryServices
+                                    + "/**"
+                    );
 
                 }
             }
