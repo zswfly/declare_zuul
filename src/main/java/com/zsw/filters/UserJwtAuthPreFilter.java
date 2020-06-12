@@ -98,6 +98,7 @@ public class UserJwtAuthPreFilter extends ZuulFilter {
                 ||Integer.valueOf(NumberUtils.toInt(tokenUserId.toString(), 0)) < 1){
                 //userId 有问题
                 ZuulUtil.reject("token验证失败 !!!!!!",ctx);
+                LOG.error("token验证失败:tokenAdminUserId  {};", tokenUserId);
             }else{
                 ctx.addZuulRequestHeader("userId", tokenUserId.toString());
             }
@@ -105,6 +106,7 @@ public class UserJwtAuthPreFilter extends ZuulFilter {
             if(rememberToken == null || StringUtils.isEmpty(rememberToken.toString())){
                 //rememberToken 有问题
                 ZuulUtil.reject("token验证失败 !!!!!!",ctx);
+                LOG.error("token验证失败:rememberToken  {};", rememberToken);
             }else{
                 //验证码校验
                 Map<String, String > param = new HashMap<>();
@@ -118,8 +120,13 @@ public class UserJwtAuthPreFilter extends ZuulFilter {
                 if(checkUserTokenResult == null
                         || checkUserTokenResult.getBody() == null
                         || !checkUserTokenResult.getBody()
-                        )ZuulUtil.reject("token验证失败 !!!!!!",ctx);
-                ctx.addZuulRequestHeader("rememberToken", rememberToken.toString());
+                        ){
+                    ZuulUtil.reject("token验证失败 !!!!!!",ctx);
+                    LOG.error("token验证失败:checkUserTokenResult  {};", checkUserTokenResult);
+                }else{
+                    ctx.addZuulRequestHeader("rememberToken", rememberToken.toString());
+                }
+
             }
 
 
@@ -131,6 +138,7 @@ public class UserJwtAuthPreFilter extends ZuulFilter {
                         ||Integer.valueOf(NumberUtils.toInt(companyId.toString(), 0)) < 1) {
                     //服务器地址 有问题
                     ZuulUtil.reject("token验证失败 !!!!!!", ctx);
+                    LOG.error("token验证失败:checkUserTokenResult  {};", tokenHostUrl);
                 }else{
                     ctx.addZuulRequestHeader("companyId", companyId.toString());
                 }

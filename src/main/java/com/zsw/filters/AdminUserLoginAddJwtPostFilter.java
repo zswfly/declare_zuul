@@ -97,6 +97,7 @@ public class AdminUserLoginAddJwtPostFilter extends ZuulFilter {
                 ctx.addZuulResponseHeader("token", token);
             }else{
                 ZuulUtil.reject(result.getMessage(),ctx);
+                LOG.error(result.getMessage());
             }
         } catch (Exception e) {
             e.printStackTrace();

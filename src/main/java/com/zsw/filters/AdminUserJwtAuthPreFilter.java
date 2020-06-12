@@ -99,6 +99,7 @@ public class AdminUserJwtAuthPreFilter extends ZuulFilter {
                     ||Integer.valueOf(NumberUtils.toInt(tokenAdminUserId.toString(), 0)) < 1){
                 //adminUserId 有问题
                 ZuulUtil.reject("token验证失败 !!!!!!",ctx);
+                LOG.error("token验证失败:tokenAdminUserId  {};", tokenAdminUserId);
             }else{
                 ctx.addZuulRequestHeader("adminUserId", tokenAdminUserId.toString());
             }
@@ -106,6 +107,7 @@ public class AdminUserJwtAuthPreFilter extends ZuulFilter {
             if(rememberToken == null || StringUtils.isEmpty(rememberToken.toString())){
                 //rememberToken 有问题
                 ZuulUtil.reject("token验证失败 !!!!!!",ctx);
+                LOG.error("token验证失败:rememberToken  {};", rememberToken);
             }else{
                 //验证码校验
                 Map<String, String > param = new HashMap<>();
@@ -116,11 +118,18 @@ public class AdminUserJwtAuthPreFilter extends ZuulFilter {
                                 + UserStaticURLUtil.adminUserController
                                 + UserStaticURLUtil.adminUserController_checkRememberToken
                         ,param,Boolean.class);
+
                 if(checkUserTokenResult == null
                         || checkUserTokenResult.getBody() == null
-                        || !checkUserTokenResult.getBody()
-                        )ZuulUtil.reject("token验证失败 !!!!!!",ctx);
-                ctx.addZuulRequestHeader("rememberToken", rememberToken.toString());
+                        || !checkUserTokenResult.getBody()){
+
+                    ZuulUtil.reject("token验证失败 !!!!!!",ctx);
+                    LOG.error("token验证失败:checkUserTokenResult  {};", checkUserTokenResult);
+
+                }else{
+                    ctx.addZuulRequestHeader("rememberToken", rememberToken.toString());
+                }
+
             }
 
             return null;
