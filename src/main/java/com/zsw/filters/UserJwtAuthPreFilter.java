@@ -138,7 +138,7 @@ public class UserJwtAuthPreFilter extends ZuulFilter {
                         ||Integer.valueOf(NumberUtils.toInt(companyId.toString(), 0)) < 1) {
                     //服务器地址 有问题
                     ZuulUtil.reject("token验证失败 !!!!!!", ctx);
-                    LOG.error("token验证失败:checkUserTokenResult  {};", tokenHostUrl);
+                    LOG.error("token验证失败:tokenHostUrl  {};", tokenHostUrl);
                 }else{
                     ctx.addZuulRequestHeader("companyId", companyId.toString());
                 }
