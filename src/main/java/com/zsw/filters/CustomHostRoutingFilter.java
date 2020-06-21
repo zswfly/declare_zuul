@@ -35,6 +35,7 @@ import org.springframework.cloud.netflix.zuul.filters.ZuulProperties;
 import org.springframework.cloud.netflix.zuul.filters.route.SimpleHostRoutingFilter;
 import org.springframework.cloud.netflix.zuul.util.ZuulRuntimeException;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
@@ -53,6 +54,7 @@ import java.util.regex.Pattern;
 /**
  * Created by zhangshaowei on 2020/5/7.
  */
+//@Component
 public class CustomHostRoutingFilter extends SimpleHostRoutingFilter{
 
     private static final Logger LOG = LoggerFactory.getLogger(CustomHostRoutingFilter.class);

@@ -326,4 +326,18 @@ public class ZuulUtil {
         }
     }
 
+
+
+    public static String  replaceUrl(HttpServletRequest request){
+        String uri =request.getRequestURI();
+        uri.replace("/"+CommonStaticWord.crmServices,"");
+        uri.replace("/"+CommonStaticWord.messageServices,"");
+        return uri;
+    }
+
+
+
+
+
+
 }
