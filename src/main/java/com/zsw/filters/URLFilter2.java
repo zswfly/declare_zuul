@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletRequest;
  * Created by zhangshaowei on 2020/6/21.
  */
 //TODO 临时添加
-@Component
+//@Component
 public class URLFilter2 extends ZuulFilter {
 
     private static final Logger LOG = LoggerFactory.getLogger(URLFilter2.class);
